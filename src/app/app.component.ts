@@ -5,7 +5,7 @@ import {TodoStore, Todo} from './services/store';
 	selector: 'todo-app',
 	templateUrl: 'app.html'
 })
-export default class TodoApp {
+export class TodoApp {
 	todoStore: TodoStore;
 	newTodoText = '';
 
