@@ -1,22 +1,58 @@
 import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
-import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
+import {TodoStore, Todo} from './services/store';
 
-import { HomePage } from '../pages/home/home';
 @Component({
-  templateUrl: 'app.html'
+	selector: 'todo-app',
+	templateUrl: 'app.html'
 })
-export class MyApp {
-  rootPage:any = HomePage;
+export default class TodoApp {
+	todoStore: TodoStore;
+	newTodoText = '';
 
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
-    platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-      statusBar.styleDefault();
-      splashScreen.hide();
-    });
-  }
+	constructor(todoStore: TodoStore) {
+		this.todoStore = todoStore;
+	}
+
+	stopEditing(todo: Todo, editedTitle: string) {
+		todo.title = editedTitle;
+		todo.editing = false;
+	}
+
+	cancelEditingTodo(todo: Todo) {
+		todo.editing = false;
+	}
+
+	updateEditingTodo(todo: Todo, editedTitle: string) {
+		editedTitle = editedTitle.trim();
+		todo.editing = false;
+
+		if (editedTitle.length === 0) {
+			return this.todoStore.remove(todo);
+		}
+
+		todo.title = editedTitle;
+	}
+
+	editTodo(todo: Todo) {
+		todo.editing = true;
+	}
+
+	removeCompleted() {
+		this.todoStore.removeCompleted();
+	}
+
+	toggleCompletion(todo: Todo) {
+		this.todoStore.toggleCompletion(todo);
+	}
+
+	remove(todo: Todo){
+		this.todoStore.remove(todo);
+	}
+
+	addTodo() {
+		if (this.newTodoText.trim().length) {
+			this.todoStore.add(this.newTodoText);
+			this.newTodoText = '';
+		}
+	}
 }
-
